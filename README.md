@@ -3,12 +3,14 @@ title: Skin Cancer Detection
 emoji: 🔬
 colorFrom: blue
 colorTo: indigo
-sdk: streamlit
-sdk_version: 1.45.1
-app_file: app.py
+sdk: docker
+app_port: 8501
 pinned: false
 license: mit
 ---
+
+<!-- HF Spaces da bo SDK streamlit built-in -> chay Streamlit qua Docker (xem Dockerfile). -->
+
 
 # 🔬 Skin Cancer Detection — Capstone Project (Machine Learning)
 
