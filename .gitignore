@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Giu lai model (.joblib) va figures vi can cho demo deploy + bao cao.
+# Neu repo qua nang, co the bo comment dong duoi de bo qua model:
+# models/*.joblib

@@ -1,0 +1,82 @@
+{
+  "binary": {
+    "best_params": {
+      "C": 10,
+      "gamma": 0.01
+    },
+    "cv_f1_macro": 0.6506,
+    "test": {
+      "accuracy": 0.7144,
+      "f1_macro": 0.6327,
+      "f1_weighted": 0.7335
+    },
+    "model_comparison": {
+      "LogisticRegression": {
+        "accuracy": 0.673,
+        "f1_macro": 0.6135,
+        "f1_weighted": 0.7017
+      },
+      "KNN": {
+        "accuracy": 0.7878,
+        "f1_macro": 0.6187,
+        "f1_weighted": 0.7664
+      },
+      "RandomForest": {
+        "accuracy": 0.7074,
+        "f1_macro": 0.6487,
+        "f1_weighted": 0.7323
+      },
+      "XGBoost": {
+        "accuracy": 0.7928,
+        "f1_macro": 0.5927,
+        "f1_weighted": 0.7587
+      },
+      "SVM": {
+        "accuracy": 0.693,
+        "f1_macro": 0.6354,
+        "f1_weighted": 0.7197
+      }
+    },
+    "report": "                            precision    recall  f1-score   support\n\n        Lanh tinh (Benign)      0.871     0.750     0.806      1584\nCan luu y (Malignant-like)      0.380     0.580     0.459       419\n\n                  accuracy                          0.714      2003\n                 macro avg      0.626     0.665     0.633      2003\n              weighted avg      0.768     0.714     0.733      2003\n"
+  },
+  "multiclass": {
+    "best_params": {
+      "C": 10,
+      "gamma": "scale"
+    },
+    "cv_f1_macro": 0.1946,
+    "test": {
+      "accuracy": 0.323,
+      "f1_macro": 0.1823,
+      "f1_weighted": 0.401
+    },
+    "model_comparison": {
+      "LogisticRegression": {
+        "accuracy": 0.2396,
+        "f1_macro": 0.1275,
+        "f1_weighted": 0.3103
+      },
+      "KNN": {
+        "accuracy": 0.687,
+        "f1_macro": 0.2152,
+        "f1_weighted": 0.6231
+      },
+      "RandomForest": {
+        "accuracy": 0.3784,
+        "f1_macro": 0.2462,
+        "f1_weighted": 0.466
+      },
+      "XGBoost": {
+        "accuracy": 0.7049,
+        "f1_macro": 0.2449,
+        "f1_weighted": 0.6382
+      },
+      "SVM": {
+        "accuracy": 0.307,
+        "f1_macro": 0.1735,
+        "f1_weighted": 0.385
+      }
+    },
+    "report": "                               precision    recall  f1-score   support\n\n    Actinic keratoses / Bowen      0.134     0.569     0.217        65\n         Basal cell carcinoma      0.179     0.369     0.241       103\nBenign keratosis-like lesions      0.050     0.005     0.008       220\n               Dermatofibroma      0.029     0.609     0.055        23\n                     Melanoma      0.250     0.126     0.167       223\n             Melanocytic nevi      0.879     0.389     0.539      1341\n             Vascular lesions      0.027     0.286     0.049        28\n\n                     accuracy                          0.323      2003\n                    macro avg      0.221     0.336     0.182      2003\n                 weighted avg      0.636     0.323     0.401      2003\n"
+  }
+}
