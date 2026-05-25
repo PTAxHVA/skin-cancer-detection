@@ -1,15 +1,11 @@
-"""Hàm đánh giá & trực quan hóa dùng chung cho notebook và script train.
-
-Tách riêng phần vẽ biểu đồ khỏi logic huấn luyện (separation of concerns) để
-cả notebook lẫn train.py đều gọi lại được mà không lặp code (DRY).
-"""
+"""Metrics + biểu đồ (confusion matrix, classification report, so sánh model)."""
 from __future__ import annotations
 
 from pathlib import Path
 
 import matplotlib
 
-matplotlib.use("Agg")  # backend không cần màn hình -> chạy được trong script/CI
+matplotlib.use("Agg")  # chạy headless trong script
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -72,7 +68,7 @@ def plot_confusion(
 
 
 def plot_class_distribution(counts, title: str, filename: str) -> Path:
-    """Vẽ biểu đồ phân bố lớp (minh họa mất cân bằng dữ liệu)."""
+    """Bar chart phân bố lớp."""
     config.FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(8, 4.5))
     order = counts.sort_values(ascending=False)

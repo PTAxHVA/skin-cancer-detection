@@ -1,10 +1,6 @@
-"""Huấn luyện & lưu mô hình cho cả 2 bài toán (binary + multi-class).
+"""Train SVM (binary + multi-class), lưu model/figures/metrics.
 
-Chạy:  python -m src.train
-Sinh ra: models/*.joblib, reports/figures/*.png, reports/metrics.json
-
-Quy trình ML chuẩn: split (stratify) -> fit preprocessor TRÊN TRAIN -> train
--> tune (GridSearchCV) -> đánh giá trên test -> lưu artifact & chỉ số.
+    python -m src.train
 """
 from __future__ import annotations
 
@@ -27,7 +23,6 @@ warnings.filterwarnings("ignore")
 
 
 def _split(df, target):
-    """Stratified split giữ nguyên tỉ lệ lớp giữa train/test."""
     return train_test_split(
         df, df[target], test_size=config.TEST_SIZE,
         random_state=config.RANDOM_STATE, stratify=df[target],
@@ -35,7 +30,6 @@ def _split(df, target):
 
 
 def _candidates(class_weight):
-    """Tập mô hình so sánh (thể hiện kiến thức cả khoá học)."""
     rs = config.RANDOM_STATE
     return {
         "LogisticRegression": LogisticRegression(
@@ -56,7 +50,6 @@ def _candidates(class_weight):
 
 
 def _tune_svm(x_train, y_train, class_weight):
-    """GridSearchCV tìm C, gamma tốt nhất cho SVM (kiến thức Buổi 9)."""
     grid = {"C": [0.1, 1, 10], "gamma": ["scale", 0.1, 0.01]}
     search = GridSearchCV(
         SVC(kernel="rbf", class_weight=class_weight, probability=True,
@@ -68,7 +61,6 @@ def _tune_svm(x_train, y_train, class_weight):
 
 
 def _compare(models, x_train, y_train, x_test, y_test):
-    """Train & đánh giá nhiều mô hình, trả về bảng chỉ số trên test."""
     results = {}
     for name, model in models.items():
         model.fit(x_train, y_train)
@@ -80,7 +72,6 @@ def run() -> dict:
     config.MODELS_DIR.mkdir(parents=True, exist_ok=True)
     df = add_labels(load_raw())
 
-    # Phân bố lớp (EDA artifact)
     evaluation.plot_class_distribution(
         df[config.TARGET_RAW].value_counts(),
         "Phan bo 7 loai ton thuong da (sau khi loai 'healthy')",
@@ -89,7 +80,7 @@ def run() -> dict:
 
     metrics: dict = {}
 
-    # ===== BÀI TOÁN 1: BINARY (Malignant-like vs Benign) =====
+    # Binary
     tr, te, ytr, yte = _split(df, config.TARGET_BINARY)
     x_tr, pre = fit_preprocessor(tr)
     x_te = pre.transform(te)
@@ -116,7 +107,7 @@ def run() -> dict:
         "report": evaluation.text_report(yte, pred_bin, target_names=bin_names),
     }
 
-    # ===== BÀI TOÁN 2: MULTI-CLASS (7 loại) =====
+    # Multi-class
     label_enc = LabelEncoder()
     df[config.TARGET_MULTI] = label_enc.fit_transform(df[config.TARGET_RAW])
     class_names = [config.DX_FULL_NAME[c].split(" (")[0] for c in label_enc.classes_]
@@ -154,7 +145,7 @@ def run() -> dict:
         ),
     }
 
-    # ===== Lưu artifact để demo tái sử dụng =====
+    # Save
     joblib.dump(svm_bin.best_estimator_, config.MODELS_DIR / "svm_binary.joblib")
     joblib.dump(svm_multi.best_estimator_, config.MODELS_DIR / "svm_multiclass.joblib")
     joblib.dump(pre, config.MODELS_DIR / "preprocessor_binary.joblib")

@@ -1,11 +1,4 @@
-"""Streamlit demo - Skin Cancer Detection (phân loại từ metadata bệnh nhân).
-
-Chạy local:   streamlit run app.py
-Deploy:       Hugging Face Spaces (SDK=streamlit) hoặc Streamlit Community Cloud.
-
-Mô hình dự đoán từ thông tin bệnh nhân (tuổi, giới tính, vị trí tổn thương),
-KHÔNG phải từ ảnh thô -> đây là công cụ HỖ TRỢ SÀNG LỌC, không thay thế chẩn đoán.
-"""
+"""Streamlit demo: dự đoán từ age/sex/localization. Chạy: streamlit run app.py"""
 from __future__ import annotations
 
 import streamlit as st

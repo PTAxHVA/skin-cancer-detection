@@ -1,12 +1,4 @@
-"""Tiền xử lý dữ liệu HAM10000 metadata.
-
-Pipeline theo đúng spec capstone:
-    load -> drop class 'healthy' -> tạo nhãn (binary + multi)
-    -> SimpleImputer (age) -> LabelEncoder (categorical) -> StandardScaler
-
-Mọi encoder/scaler đều được trả về để lưu lại (joblib), đảm bảo demo tái lập
-chính xác bước biến đổi đã dùng khi train (tránh train/serving skew).
-"""
+"""Tiền xử lý HAM10000: impute age, encode categorical, scale."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -20,7 +12,7 @@ from . import config
 
 @dataclass
 class Preprocessor:
-    """Gói toàn bộ artifact biến đổi để tái sử dụng lúc inference."""
+    """Imputer + encoders + scaler đã fit, dùng lại lúc inference."""
 
     age_imputer: SimpleImputer
     encoders: dict[str, LabelEncoder]
@@ -28,11 +20,10 @@ class Preprocessor:
     feature_columns: list[str]
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Áp dụng lại đúng các bước biến đổi đã fit cho dữ liệu mới."""
         out = df[self.feature_columns].copy()
         out["age"] = self.age_imputer.transform(out[["age"]])
         for col, encoder in self.encoders.items():
-            # Giá trị lạ (không thấy lúc train) -> ánh xạ về lớp đầu tiên an toàn.
+            # Giá trị lạ -> fallback về class đầu tiên thay vì raise.
             known = set(encoder.classes_)
             out[col] = out[col].astype(str).apply(
                 lambda v: v if v in known else encoder.classes_[0]
@@ -46,16 +37,15 @@ class Preprocessor:
 
 
 def load_raw(path=config.DATA_PATH) -> pd.DataFrame:
-    """Đọc CSV gốc, raise lỗi rõ ràng nếu thiếu file (error handling)."""
     if not path.exists():
         raise FileNotFoundError(
-            f"Khong tim thay du lieu: {path}. Hay dat HAM10000_metadata.csv vao thu muc data/."
+            f"Khong tim thay du lieu: {path}. Dat HAM10000_metadata.csv vao data/."
         )
     return pd.read_csv(path)
 
 
 def add_labels(df: pd.DataFrame) -> pd.DataFrame:
-    """Loại lớp 'healthy' và sinh 2 cột nhãn: nhị phân + đa lớp."""
+    """Loại 'healthy', tạo nhãn binary + multi."""
     df = df[~df[config.TARGET_RAW].isin(config.DROP_CLASSES)].copy()
     df[config.TARGET_BINARY] = (
         df[config.TARGET_RAW].isin(config.MALIGNANT_GROUP).astype(int)
@@ -65,7 +55,7 @@ def add_labels(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def fit_preprocessor(df: pd.DataFrame) -> tuple[pd.DataFrame, Preprocessor]:
-    """Fit imputer/encoder/scaler trên tập train và trả về ma trận đặc trưng."""
+    """Fit trên train, trả về (X, preprocessor)."""
     features = df[config.FEATURE_COLUMNS].copy()
 
     age_imputer = SimpleImputer(strategy="median")

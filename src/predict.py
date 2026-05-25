@@ -1,8 +1,4 @@
-"""Tải mô hình đã lưu và dự đoán từ thông tin bệnh nhân (age, sex, localization).
-
-Dùng bởi Streamlit app (app.py). Tách khỏi train để demo khởi động nhanh,
-không cần huấn luyện lại.
-"""
+"""Load model đã lưu, dự đoán từ age/sex/localization. Dùng bởi app.py."""
 from __future__ import annotations
 
 from functools import lru_cache
